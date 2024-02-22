@@ -460,37 +460,15 @@ def user_info(request, user_id):
 
 
 def edit_quiz(request, quiz_id):
-    chapters = Chapter.objects.all()
-    volumes = Volume.objects.all()
-
     quiz_instance = get_object_or_404(Quiz, quiz_id=quiz_id)
     quiz_questions = (
         Quiz_Question.objects.all()
         .filter(quiz=quiz_instance.quiz_id)
         .order_by("ordering")
     )
-    questions_Loc_quiz_attatchments = list()
-
-    for quiz_question in quiz_questions:
-        # Display question only with ENG lang code and US dialect code for editing 
-        question_Loc = Question_Loc.objects.all().filter(
-            question=quiz_question.question,
-            lang_code="ENG", dialect_code="US",
-        ).first()
-
-        question_attachments = Question_Attachment.objects.filter(question = question_Loc)
-
-        files = list()
-        for question_attachment in question_attachments:
-            file = question_attachment.blob.file
-            files.append(file)
-
-        questions_Loc_quiz_attatchments.append((question_Loc, quiz_question, files))
-
     if request.method == "POST":
         if request.POST.get("command") == "save":
             ids_str = json.loads(request.POST.get("ids"))
-
             ids = list()
             for id_str in ids_str:
                 ids.append(int(id_str))
@@ -504,12 +482,11 @@ def edit_quiz(request, quiz_id):
                     if quiz_question.question.question_id == id:
                         quiz_question.ordering = count
                         quiz_question.save()
-
             quiz_instance.conceptual_difficulty = float(request.POST.get("conceptual_difficulty"))
             quiz_instance.time_required_mins = int(request.POST.get("time_required_mins"))
             quiz_instance.volume = get_object_or_404(Volume, volume_id = request.POST.get("volume"))
+            
             quiz_instance.chapter = get_object_or_404(Chapter, chapter_id = request.POST.get("chapter"))
-
             calculator_allowed_str = request.POST.get("calculator_allowed")
             computer_allowed_str = request.POST.get("computer_allowed")
             internet_allowed_str = request.POST.get("internet_allowed")
@@ -536,7 +513,27 @@ def edit_quiz(request, quiz_id):
                 quiz_instance.book_allowed = False
 
             quiz_instance.save()
-            return JsonResponse({"success": True})
+            return JsonResponse({"success": True})   
+
+    questions_Loc_quiz_attatchments = list()
+    chapters = Chapter.objects.all()
+    volumes = Volume.objects.all()
+
+    for quiz_question in quiz_questions:
+        # Display question only with ENG lang code and US dialect code for editing 
+        question_Loc = Question_Loc.objects.all().filter(
+            question=quiz_question.question,
+            lang_code="ENG", dialect_code="US",
+        ).first()
+
+        question_attachments = Question_Attachment.objects.filter(question = question_Loc)
+
+        files = list()
+        for question_attachment in question_attachments:
+            file = question_attachment.blob.file
+            files.append(file)
+
+        questions_Loc_quiz_attatchments.append((question_Loc, quiz_question, files))
 
     return render(
         request,
@@ -666,14 +663,14 @@ def edit_quiz_add_question(request, quiz_id):
     )
 
 
-def header(request, page):
+def header(request):
     return render(
         request,
         "mentapp/header.html",
     )
 
 
-def footer(request, page):
+def footer(request):
     return render(
         request,
         "mentapp/footer.html",
