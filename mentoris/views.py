@@ -711,10 +711,15 @@ def edit_quiz_add_question(request, quiz_id):
 
 def edit_quiz_add_support(request, quiz_id):
 
+    volumes = Volume.objects.all()
+    creators = User.objects.all()
+    
     return render(request,
         "mentapp/edit_quiz_add_support.html/",
         {
-            "quiz_id": quiz_id
+            "quiz_id": quiz_id,
+            "volumes": volumes,
+            "creators": creators
         }
     )
 

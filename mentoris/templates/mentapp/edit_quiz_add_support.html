@@ -149,42 +149,27 @@
                 toggle_add(this);
             });
 
-            // Dynamicly create each question when filter is pressed
+            // Dynamicly create each support when filter is pressed
             $('#filter_button').on('click', function (event) {
                 console.log(document.getElementById('volume_value').value);
                 volume_value = document.getElementById('volume_value').value;
                 creator_value = document.getElementById('creator_value').value;
                 title = document.getElementById('title').value;
 
-                var request;
+                var request = $.ajax({
+                    type: "GET",
+                    url: "/edit_quiz_add_support/{{quiz_id}}",
+                    dataType: 'json',
+                    data: {
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        command: "filter",
+                        volume: volume_value,
+                        creator: creator_value,
+                        title_latex: title
+                    }
+                });
 
-                if (title != "") {
-                    request = $.ajax({
-                        type: "GET",
-                        url: "/edit_quiz_add_support/{{quiz_id}}",
-                        dataType: 'json',
-                        data: {
-                            csrfmiddlewaretoken: "{{csrf_token}}",
-                            command: "filter",
-                            volume: volume_value,
-                            creator: creator_value,
-                            title: title
-                        }
-                    });
-                }
-                else {
-                    request = $.ajax({
-                        type: "GET",
-                        url: "/edit_quiz_add_support/{{quiz_id}}",
-                        dataType: 'json',
-                        data: {
-                            csrfmiddlewaretoken: "{{csrf_token}}",
-                            command: "filter",
-                            volume: volume_value,
-                            creator: creator_value,
-                        }
-                    });
-                }
+
                 request.done(function (data) {
                     document.getElementById("supports_list").innerHTML = "";
                     for (const i in data) {
@@ -199,6 +184,8 @@
                         question_wrapper.style.float = "left";
                         question_wrapper.appendChild(make_attribute_label("Volume: ", "volume", data[i]["volume"]));
                         question_wrapper.appendChild(make_attribute_label("Creator: ", "creator", data[i]["creator"]));
+                        question_wrapper.appendChild(make_attribute_label("Title: ", "title_latex", data[i]["title_latex"]));
+
                         border_wrapper.appendChild(question_wrapper);
 
                         var button_wrapper = document.createElement("div");
@@ -236,7 +223,7 @@
 
             $('#save_changes_button').on('click', function (event) {
                 var list = document.getElementById("supports_list").children;
-                var question_id_list = [];
+                var support_id_list = [];
                 for (var i = 0; i < list.length; ++i) {
                     let add_button = list[i].getElementsByClassName("add_support_button")[0];
                     if ($(add_button).hasClass("add_support_do_not_add_state")) {
