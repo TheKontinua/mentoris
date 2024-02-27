@@ -709,6 +709,15 @@ def edit_quiz_add_question(request, quiz_id):
         },
     )
 
+def edit_quiz_add_support(request, quiz_id):
+
+    return render(request,
+        "mentapp/edit_quiz_add_support.html/",
+        {
+            "quiz_id": quiz_id
+        }
+    )
+
 
 def header(request, page):
     return render(
