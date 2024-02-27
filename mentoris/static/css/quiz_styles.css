@@ -1,5 +1,15 @@
 li {
     font-size: .9em;
+    padding: 0px;
+}
+
+.form_label {
+    display: inline-block;
+    width: 10em;
+}
+
+.form_element_wrapper {
+    margin: 5px;
 }
 
 .small_margin {
@@ -20,6 +30,7 @@ li {
 
 #right_panel {
     float: right;
+    width: 35em;
 }
 #left_panel {
     float: left;
@@ -30,7 +41,7 @@ button {
     border-radius: 25px;
     margin: 5px;
     width: 8em;
-    height: 2em;
+    min-height: 2em;
 }
 
 button:hover {

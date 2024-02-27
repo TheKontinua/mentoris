@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -39,4 +41,5 @@ urlpatterns = [
     path("download_pdf/<int:blob_key>/", views.download_pdf, name='download_pdf'),
     path("upload_pdf/<path:pdf_path>/", views.upload_pdf, name='upload_pdf'),
     path("create_support/", views.create_support, name="create_support"),
-]
+    path('quiz/create/<int:volume_id>/<chapter_id>', views.create_quiz, name='create_quiz'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
